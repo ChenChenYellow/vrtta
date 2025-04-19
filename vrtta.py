@@ -110,4 +110,4 @@ def score_summary():
 
 if __name__ == '__main__':
    history = []
-   app.run()
+   app.run(host='0.0.0.0', port=80)
