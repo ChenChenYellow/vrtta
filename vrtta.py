@@ -1,6 +1,7 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 app = Flask(__name__)
 global history 
+history = []
 
 @app.route('/')
 def hello_world():
@@ -13,6 +14,8 @@ def score():
    weight_grams = request.json.get('weight_grams')
    transport = request.json.get('transport')
    packaging = request.json.get('packaging')
+   if not isinstance(weight_grams, int) and not isinstance(weight_grams, float):
+      return make_response("weight_grams not int nor float", 401)
    score = 0
    suggestions = []
    for m in materials:
@@ -55,12 +58,12 @@ def score():
       "answer": answer
    })
 
-   return jsonify(answer)
+   return make_response(jsonify(answer), 200)
    
 
 @app.route('/history', methods= ['GET'])
-def history():
-   return jsonify(history)
+def get_history():
+   return make_response(jsonify(history), 200)
 
 
 @app.route('/score-summary', methods= ['GET'])
@@ -101,13 +104,12 @@ def score_summary():
    if total_products != 0:
       average_score = total_score/total_products
    
-   return jsonify(
+   return make_response(jsonify(
       total_products = total_products,
       average_score = average_score,
       ratings = ratings,
       top_issues = top_issues
-   )
+   ), 200)
 
 if __name__ == '__main__':
-   history = []
    app.run(host='0.0.0.0', port=80)
